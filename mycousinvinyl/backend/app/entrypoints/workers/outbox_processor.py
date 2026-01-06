@@ -13,13 +13,11 @@ import logging
 from uuid import UUID
 
 from app.config import get_settings
-from app.logging_config import configure_logging
 from app.adapters.postgres.database import AsyncSessionLocal
 from app.adapters.postgres.unit_of_work import SqlAlchemyUnitOfWork
 from app.adapters.messaging.publisher_factory import get_message_publisher
 
-settings = get_settings()
-configure_logging(settings.log_level)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -27,7 +25,7 @@ class OutboxProcessor:
     """Processes outbox events and publishes them to ActiveMQ."""
 
     def __init__(self):
-        self.settings = settings
+        self.settings = get_settings()
         self.publisher = get_message_publisher()
         self.running = False
 

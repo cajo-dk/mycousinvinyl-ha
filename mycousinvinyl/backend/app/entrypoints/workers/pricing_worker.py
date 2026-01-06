@@ -14,7 +14,6 @@ import logging
 from datetime import datetime, timedelta, timezone
 
 from app.config import get_settings
-from app.logging_config import configure_logging
 from app.adapters.postgres.database import AsyncSessionLocal
 from app.adapters.postgres.unit_of_work import SqlAlchemyUnitOfWork
 from app.adapters.postgres.market_data_repository_adapter import MarketDataRepositoryAdapter
@@ -22,8 +21,7 @@ from app.adapters.postgres.pressing_repository_adapter import PressingRepository
 from app.adapters.http.discogs_client import DiscogsClientAdapter
 from app.application.services.pricing_service import PricingService
 
-settings = get_settings()
-configure_logging(settings.log_level)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -31,7 +29,7 @@ class PricingWorker:
     """Updates marketplace pricing data from Discogs."""
 
     def __init__(self):
-        self.settings = settings
+        self.settings = get_settings()
         self.running = False
         self.stale_threshold_days = 30
         self.batch_size = 300  # Max pressings to process per run

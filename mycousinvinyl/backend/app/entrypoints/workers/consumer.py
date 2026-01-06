@@ -19,7 +19,6 @@ from stomp import Connection
 from stomp.listener import ConnectionListener
 
 from app.config import get_settings
-from app.logging_config import configure_logging
 from app.adapters.postgres.database import AsyncSessionLocal
 from app.adapters.postgres.unit_of_work import SqlAlchemyUnitOfWork
 from app.adapters.messaging.publisher_factory import get_message_publisher
@@ -30,8 +29,7 @@ from app.application.services.pressing_service import PressingService
 from app.domain.value_objects import VinylFormat, VinylSpeed, VinylSize
 from app.domain.events import ActivityEvent
 
-settings = get_settings()
-configure_logging(settings.log_level)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 

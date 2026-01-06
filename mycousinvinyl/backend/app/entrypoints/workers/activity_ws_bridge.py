@@ -14,11 +14,9 @@ from stomp import Connection
 from stomp.listener import ConnectionListener
 
 from app.config import get_settings
-from app.logging_config import configure_logging
 from app.adapters.mqtt.utils import parse_mqtt_url, mqtt_publish_topic
 
-settings = get_settings()
-configure_logging(settings.log_level)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -26,7 +24,7 @@ class ActivityBridgeListener(ConnectionListener):
     """Forward activity messages from the broker to the API websocket broadcaster."""
 
     def __init__(self):
-        self.settings = settings
+        self.settings = get_settings()
         self.client = httpx.Client(timeout=5)
 
     def on_error(self, frame):
