@@ -1,7 +1,7 @@
 name: MyCousinVinyl
 slug: mycousinvinyl
-version: 0.2.0
-description: MyCousinVinyl single-container stack (uses external MQTT and Postgres).
+version: 0.2.1
+description: MyCousinVinyl single-container stack with MQTT support.
 arch:
   - amd64
   - aarch64
@@ -20,10 +20,12 @@ ports_description:
 webui: "http://[HOST]:[PORT:80]"
 panel_icon: mdi:album
 options:
+  message_broker: mqtt
   mqtt_url: mqtt://core-mosquitto:1883
   mqtt_username: ""
   mqtt_password: ""
   mqtt_topic_prefix: MyCousinVinyl
+  activemq_url: stomp://activemq:61613
   database_url: postgresql://postgres:postgres@core-postgres:5432/mycousinvinyl
   activity_topic: /topic/system.activity
   activity_bridge_url: http://127.0.0.1:8000
@@ -44,6 +46,8 @@ options:
   album_wizard_api_key: ""
   album_wizard_model_id: ""
   log_level: INFO
+  cors_allow_origins: ""
+  cors_allow_origin_regex: ""
   vite_api_url: ""
   vite_azure_client_id: ""
   vite_azure_tenant_id: ""
@@ -52,10 +56,12 @@ options:
   vite_debug_admin: false
   vite_debug_nav: false
 schema:
+  message_broker: list(mqtt|activemq)
   mqtt_url: str
   mqtt_username: str
   mqtt_password: str
   mqtt_topic_prefix: str
+  activemq_url: str
   database_url: str
   activity_topic: str
   activity_bridge_url: str
@@ -70,12 +76,14 @@ schema:
   discogs_user_agent: str
   discogs_key: str
   discogs_secret: str
-  discogs_oauth_token: str?
-  discogs_oauth_token_secret: str?
+  discogs_oauth_token: str
+  discogs_oauth_token_secret: str
   album_wizard_api_url: str
   album_wizard_api_key: str
   album_wizard_model_id: str
   log_level: str
+  cors_allow_origins: str
+  cors_allow_origin_regex: str
   vite_api_url: str
   vite_azure_client_id: str
   vite_azure_tenant_id: str
