@@ -25,12 +25,12 @@ FROM ${BUILD_FROM}
 ENV PYTHONUNBUFFERED=1
 WORKDIR /opt/mycousinvinyl
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apk add --no-cache \
+    bash \
     gcc \
     nginx \
     postgresql-client \
-    supervisor \
-    && rm -rf /var/lib/apt/lists/*
+    supervisor
 
 COPY backend/requirements.txt /tmp/backend-requirements.txt
 COPY discogs-service/requirements.txt /tmp/discogs-requirements.txt
