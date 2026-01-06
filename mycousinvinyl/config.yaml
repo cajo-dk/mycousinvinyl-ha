@@ -1,6 +1,6 @@
 name: MyCousinVinyl
 slug: mycousinvinyl
-version: 0.1.8
+version: 0.1.9
 description: MyCousinVinyl single-container stack (uses external MQTT and Postgres).
 arch:
   - amd64
@@ -70,8 +70,8 @@ schema:
   discogs_user_agent: str
   discogs_key: str
   discogs_secret: str
-  discogs_oauth_token: str
-  discogs_oauth_token_secret: str
+  discogs_oauth_token: str?
+  discogs_oauth_token_secret: str?
   album_wizard_api_url: str
   album_wizard_api_key: str
   album_wizard_model_id: str
