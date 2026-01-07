@@ -40,6 +40,7 @@ OPTION_KEYS = {
     "vite_azure_group_admin": "VITE_AZURE_GROUP_ADMIN",
     "vite_debug_admin": "VITE_DEBUG_ADMIN",
     "vite_debug_nav": "VITE_DEBUG_NAV",
+    "vite_manifest_env": "VITE_MANIFEST_ENV"
 }
 
 
