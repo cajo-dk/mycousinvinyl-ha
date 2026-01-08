@@ -40,10 +40,10 @@ COPY backend /opt/mycousinvinyl/backend
 COPY discogs-service /opt/mycousinvinyl/discogs-service
 
 COPY --from=frontend-build /app/frontend/dist /usr/share/nginx/html
-COPY ha-addon/nginx.conf /etc/nginx/conf.d/default.conf
-COPY ha-addon/supervisord.conf /etc/supervisord.conf
-COPY ha-addon/run.sh /usr/local/bin/run.sh
-COPY ha-addon/ha-options.py /usr/local/bin/ha-options.py
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY supervisord.conf /etc/supervisord.conf
+COPY run.sh /usr/local/bin/run.sh
+COPY ha-options.py /usr/local/bin/ha-options.py
 RUN cat <<'PY' > /usr/local/bin/write-env-config.py
 import json
 import os
