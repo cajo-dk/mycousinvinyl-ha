@@ -1,4 +1,4 @@
-ARG BUILD_FROM
+ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:latest
 
 FROM node:20-alpine AS frontend-build
 WORKDIR /app
@@ -28,13 +28,21 @@ WORKDIR /opt/mycousinvinyl
 RUN apk add --no-cache \
     bash \
     gcc \
+    libffi-dev \
+    musl-dev \
     nginx \
+    openssl-dev \
     postgresql-client \
+    python3 \
+    python3-dev \
+    py3-pip \
+    py3-setuptools \
+    py3-wheel \
     supervisor
 
 COPY backend/requirements.txt /tmp/backend-requirements.txt
 COPY discogs-service/requirements.txt /tmp/discogs-requirements.txt
-RUN pip install --no-cache-dir -r /tmp/backend-requirements.txt -r /tmp/discogs-requirements.txt
+RUN python3 -m pip install --no-cache-dir -r /tmp/backend-requirements.txt -r /tmp/discogs-requirements.txt
 
 COPY backend /opt/mycousinvinyl/backend
 COPY discogs-service /opt/mycousinvinyl/discogs-service

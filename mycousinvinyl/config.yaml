@@ -1,6 +1,6 @@
 name: MyCousinVinyl
 slug: mycousinvinyl
-version: 0.3.5
+version: 0.3.6
 description: MyCousinVinyl single-container stack with MQTT support.
 arch:
   - amd64
