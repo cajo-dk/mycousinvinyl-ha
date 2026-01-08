@@ -8,8 +8,6 @@ if [ -f /data/options.json ]; then
   set +a
 fi
 
-export MESSAGE_BROKER="${MESSAGE_BROKER:-mqtt}"
-
 python /usr/local/bin/write-env-config.py
 
 exec /usr/bin/supervisord -c /etc/supervisord.conf
