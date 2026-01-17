@@ -18,6 +18,44 @@ export const apiClient = axios.create({
 
 // Store MSAL instance (will be set by configureMsalInstance)
 let msalInstanceRef: any = null;
+let authRedirectInProgress = false;
+
+const AUTH_REQUIRED_ERROR_CODES = new Set([
+  'interaction_required',
+  'login_required',
+  'monitor_window_timeout',
+  'token_renewal_error',
+  'no_tokens_found',
+]);
+
+async function clearMsalSession() {
+  if (!msalInstanceRef) {
+    return;
+  }
+
+  const account = msalInstanceRef.getActiveAccount?.() || msalInstanceRef.getAllAccounts?.()[0];
+  const tokenCache = msalInstanceRef.getTokenCache?.();
+
+  if (account && tokenCache?.removeAccount) {
+    try {
+      await tokenCache.removeAccount(account);
+    } catch (cacheError) {
+      console.error('Failed to clear MSAL cache:', cacheError);
+    }
+  }
+
+  msalInstanceRef.setActiveAccount?.(null);
+}
+
+async function redirectToLogin() {
+  if (authRedirectInProgress) {
+    return;
+  }
+
+  authRedirectInProgress = true;
+  await clearMsalSession();
+  window.location.assign('/');
+}
 
 /**
  * Configure the API client with an initialized MSAL instance.
@@ -40,6 +78,7 @@ apiClient.interceptors.request.use(
 
       const accounts = msalInstanceRef.getAllAccounts();
       if (accounts.length === 0) {
+        await redirectToLogin();
         throw new Error('No active account');
       }
 
@@ -56,9 +95,7 @@ apiClient.interceptors.request.use(
         console.log('Silent token acquisition failed, trying popup...', silentError);
 
         // If silent acquisition fails (e.g., consent required), use popup
-        if (silentError.errorCode === 'consent_required' ||
-            silentError.errorCode === 'interaction_required' ||
-            silentError.errorCode === 'login_required') {
+        if (silentError.errorCode === 'consent_required') {
           try {
             response = await msalInstanceRef.acquireTokenPopup({
               ...apiRequest,
@@ -68,6 +105,9 @@ apiClient.interceptors.request.use(
             console.error('Popup token acquisition failed:', popupError);
             throw popupError;
           }
+        } else if (AUTH_REQUIRED_ERROR_CODES.has(silentError?.errorCode)) {
+          await redirectToLogin();
+          throw silentError;
         } else {
           throw silentError;
         }
@@ -77,7 +117,10 @@ apiClient.interceptors.request.use(
       if (response && response.accessToken) {
         config.headers.Authorization = `Bearer ${response.accessToken}`;
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (AUTH_REQUIRED_ERROR_CODES.has(error?.errorCode) || error?.message === 'No active account') {
+        await redirectToLogin();
+      }
       console.error('Error acquiring token:', error);
       // Token acquisition failed - request will proceed without auth header
     }
@@ -96,9 +139,9 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid - redirect to login
+      // Token expired or invalid - show login view
       console.error('Unauthorized - token may be expired');
-      // You can trigger re-authentication here
+      await redirectToLogin();
     }
 
     if (error.response?.status === 403) {
