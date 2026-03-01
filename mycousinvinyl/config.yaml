@@ -1,6 +1,6 @@
 name: MyCousinVinyl
 slug: mycousinvinyl
-version: 1.3.6
+version: 1.3.7
 description: Vinyl record collection manager
 arch:
   - amd64
